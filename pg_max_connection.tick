@@ -1,0 +1,13 @@
+dbrp "pgstats"."autogen"
+
+stream
+    |from()
+        .measurement('pgstats_databases')
+        .groupBy('cluster','database')
+    |alert()
+        // critique a  95%
+        .crit(lambda: float("percent_connection_usage") > 95)
+        // formatage du message
+	.message('[{{ index .Tags "cluster" }} ], {{ index .Tags "account" }}: Connexion usage is {{index .Tags "percent_connection_usage"}}')
+        .email()
+

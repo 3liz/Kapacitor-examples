@@ -1,0 +1,13 @@
+dbrp "pgbouncer"."autogen"
+
+stream
+    |from()
+        .measurement('pgbouncer_pools')
+        .groupBy('db','user')
+    |alert()
+        // critique a  95%
+        .crit(lambda: "maxwait" > 300)
+        // formatage du message
+	.message('[{{ index .Tags "DB" }} ], {{ index Tags "user" }}: Maxwait  {{index .Tags "maxwait"}}')
+        .email()
+
