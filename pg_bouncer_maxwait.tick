@@ -1,9 +1,14 @@
 dbrp "pgbouncer"."autogen"
 
-stream
+var data = stream
     |from()
         .measurement('pgbouncer_pools')
         .groupBy('db','user')
+data
+    |deadman(100.0,15m)
+	.message('No data for {{ index .Tags "DB" }}')
+	.email()
+data
     |alert()
         // critique a  95%
         .crit(lambda: "maxwait" > 300)

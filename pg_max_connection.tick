@@ -1,9 +1,14 @@
 dbrp "pgstats"."autogen"
 
-stream
+var data = stream
     |from()
         .measurement('pgstats_databases')
         .groupBy('cluster','database')
+data
+    |deadman(100.0,15m)
+        .message('No data for {{ index .Tags "cluster" }} , {{ index .Tags "account" }')
+        .email()
+data
     |alert()
         // critique a  95%
         .crit(lambda: float("percent_connection_usage") > 95)
