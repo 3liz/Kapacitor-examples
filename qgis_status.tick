@@ -1,4 +1,4 @@
-dbrp "gqis"."autogen"
+dbrp "qgis"."autogen"
 
 var data = stream
     |from()
